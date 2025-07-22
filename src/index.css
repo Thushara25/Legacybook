@@ -1,63 +1,63 @@
-    @tailwind base;
-    @tailwind components;
-    @tailwind utilities;
-    body {
-        @apply bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 text-gray-900 min-h-screen font-sans;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+    @apply bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 text-gray-900 min-h-screen font-sans;
+}
+
+.dark body {
+    @apply from-gray-900 via-gray-800 to-gray-900 text-white;
+}
+
+@layer utilities {
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-in-out both;
     }
-    
-    .dark body {
-        @apply from-gray-900 via-gray-800 to-gray-900 text-white;
+    .animate-fade-in-up {
+        animation: fadeInUp 0.7s ease-in-out both;
     }
-    
-    @layer utilities {
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-in-out both;
+    .animate-fade-in-down {
+        animation: fadeInDown 0.7s ease-in-out both;
+    }
+    .animate-slide-up {
+        animation: slideUp 0.5s ease-in-out both;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
         }
-        .animate-fade-in-up {
-            animation: fadeInUp 0.7s ease-in-out both;
-        }
-        .animate-fade-in-down {
-            animation: fadeInDown 0.7s ease-in-out both;
-        }
-        .animate-slide-up {
-            animation: slideUp 0.5s ease-in-out both;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes slideUp {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0px);
-                opacity: 1;
-            }
+        to {
+            opacity: 1;
         }
     }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes slideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0px);
+            opacity: 1;
+        }
+    }
+}
