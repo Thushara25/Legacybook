@@ -15,7 +15,7 @@ router.post('/signup', async(req, res) => {
     }
 
     username = username.trim();
-    password = password.trim(); // ✅ Also trim password
+    password = password.trim();
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -24,9 +24,9 @@ router.post('/signup', async(req, res) => {
         );
 
         const user = result.rows[0];
-        const token = jwt.sign({ id: user.id, username: user.username },
-            process.env.JWT_SECRET, { expiresIn: '1h' }
-        );
+        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
+            expiresIn: '1h',
+        });
 
         res.status(201).json({ message: 'User created', token });
     } catch (err) {
@@ -47,12 +47,11 @@ router.post('/login', async(req, res) => {
         return res.status(400).json({ error: 'Username and password required' });
     }
 
-    username = username.trim(); // ✅ Trim input
+    username = username.trim();
+    password = password.trim();
 
     try {
-        const result = await pool.query(
-            'SELECT * FROM users WHERE username = $1', [username]
-        );
+        const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
         console.log('🧑‍💻 Query result:', result.rows);
 
         if (result.rows.length === 0) {
@@ -61,8 +60,8 @@ router.post('/login', async(req, res) => {
         }
 
         const user = result.rows[0];
-        console.log('DB HASH:', user.password);
-        console.log('USER INPUT:', password);
+        console.log('DB password hash:', user.password);
+        console.log('User input password:', password);
 
         const isMatch = await bcrypt.compare(password, user.password);
         console.log('✅ Password match:', isMatch);
@@ -72,9 +71,9 @@ router.post('/login', async(req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ id: user.id, username: user.username },
-            process.env.JWT_SECRET, { expiresIn: '1h' }
-        );
+        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
+            expiresIn: '1h',
+        });
 
         res.json({ token });
     } catch (err) {
@@ -82,7 +81,5 @@ router.post('/login', async(req, res) => {
         res.status(500).json({ error: err.message || 'Internal server error' });
     }
 });
-
-
 
 module.exports = router;

@@ -21,9 +21,9 @@ export default function MemoryForm({ addMemory }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="shadow-lg rounded-xl p-6 space-y-4 bg-green-200 dark:bg-gray-800 transition-colors duration-300"
+      className="shadow-lg rounded-xl p-6 space-y-4 bg-gray-400 dark:bg-gray-800 transition-colors duration-300"
     >
-      <h2 className="text-xl font-semibold text-purple-600 dark:text-purple-400">
+      <h2 className="text-xl font-semibold text-purple-900 dark:text-purple-400">
         Add a Memory
       </h2>
 
