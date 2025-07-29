@@ -47,13 +47,13 @@ router.post('/login', async(req, res) => {
         return res.status(400).json({ error: 'Username and password required' });
     }
 
-    username = username.trim();
+    username = username.trim(); // ✅ Trim input
 
     try {
         const result = await pool.query(
             'SELECT * FROM users WHERE username = $1', [username]
         );
-        console.log('🔍 DB RESULT:', result.rows);
+        console.log('🧑‍💻 Query result:', result.rows);
 
         if (result.rows.length === 0) {
             console.log('❌ No user found with username:', username);
@@ -61,18 +61,20 @@ router.post('/login', async(req, res) => {
         }
 
         const user = result.rows[0];
-        console.log('🔐 DB HASH:', user.password);
-        console.log('📝 RAW PASSWORD:', password);
+        console.log('DB HASH:', user.password);
+        console.log('USER INPUT:', password);
 
         const isMatch = await bcrypt.compare(password, user.password);
         console.log('✅ Password match:', isMatch);
 
         if (!isMatch) {
+            console.log('❌ Password mismatch');
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
         const token = jwt.sign({ id: user.id, username: user.username },
-            process.env.JWT_SECRET, { expiresIn: '1h' });
+            process.env.JWT_SECRET, { expiresIn: '1h' }
+        );
 
         res.json({ token });
     } catch (err) {
@@ -80,6 +82,7 @@ router.post('/login', async(req, res) => {
         res.status(500).json({ error: err.message || 'Internal server error' });
     }
 });
+
 
 
 module.exports = router;
