@@ -86,21 +86,20 @@ router.post('/signup', async(req, res) => {
     }
 });
 
-// 🔐 Login
 router.post('/login', async(req, res) => {
     const { username, password } = req.body;
-    if (!username || !password) {
+    console.log('🔐 Login attempt for:', username);
+
+    if (!username || !password)
         return res.status(400).json({ error: 'Username and password required' });
-    }
 
     try {
-        console.log('🔐 Login attempt for:', username);
-
         const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
         console.log('🧑‍💻 Query result:', result.rows);
 
         if (result.rows.length === 0) {
-            return res.status(401).json({ error: 'Invalid credentials (user not found)' });
+            console.log('❌ No user found');
+            return res.status(401).json({ error: 'Invalid credentials' });
         }
 
         const user = result.rows[0];
@@ -108,7 +107,8 @@ router.post('/login', async(req, res) => {
         console.log('✅ Password match:', isMatch);
 
         if (!isMatch) {
-            return res.status(401).json({ error: 'Invalid credentials (wrong password)' });
+            console.log('❌ Password mismatch');
+            return res.status(401).json({ error: 'Invalid credentials' });
         }
 
         const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
@@ -117,10 +117,11 @@ router.post('/login', async(req, res) => {
 
         res.json({ token });
     } catch (err) {
-        console.error('❌ Login error:', err); // Log full error object
-        res.status(500).json({ error: err.message || 'Something went wrong during login' });
+        console.error('❌ Login error:', err);
+        res.status(500).json({ error: err.message });
     }
 });
+
 
 
 module.exports = router;
