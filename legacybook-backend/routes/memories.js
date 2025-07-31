@@ -272,16 +272,26 @@ router.post("/", authenticateToken, async(req, res) => {
 router.get("/", authenticateToken, async(req, res) => {
     try {
         const userId = req.user.id;
+
+        if (!userId) {
+            console.error("❌ No user ID found in request");
+            return res.status(401).json({ error: "Unauthorized: User ID missing" });
+        }
+
         const result = await pool.query(
-            "SELECT * FROM memories WHERE user_id = $1 ORDER BY memory_id DESC", [userId]
+            "SELECT id, title, description, image_url FROM memories WHERE user_id = $1 ORDER BY id DESC", [userId]
         );
-        res.json({ memories: result.rows });
+
+        res.status(200).json({ memories: result.rows });
     } catch (err) {
-        console.error("Error fetching memories:", err);
-        res.status(500).json({ error: "Failed to fetch memories" });
+        console.error("❌ Error fetching memories from DB:", {
+            message: err.message,
+            stack: err.stack,
+            dbError: err,
+        });
+        res.status(500).json({ error: "Failed to fetch memories", details: err.message });
     }
 });
-
 
 
 module.exports = router;

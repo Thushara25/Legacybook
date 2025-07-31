@@ -31,8 +31,10 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-module.exports = authenticateToken;*/ // middleware/authMiddleware.js
-/*const jwt = require('jsonwebtoken');
+module.exports = authenticateToken;*/
+
+/* middleware/authMiddleware.js
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const authenticateToken = (req, res, next) => {
@@ -54,4 +56,4 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-module.exports = authenticateToken;*/
+module.exports = authenticateToken; */

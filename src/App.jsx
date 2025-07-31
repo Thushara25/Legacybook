@@ -257,6 +257,7 @@ function App() {
 const fetchMemories = async () => {
   try {
     const token = localStorage.getItem("token");
+
     const res = await API.get('/memories', {
       headers: {
         Authorization: `Bearer ${token}`
@@ -265,16 +266,21 @@ const fetchMemories = async () => {
 
     const formatted = res.data.memories.map((m) => ({
       ...m,
-      memory_id: m.memory_id || m.id,
       imageUrl: m.image_url ?? '',
     }));
 
-    console.log("Fetched Memories:", formatted);
+    console.log("✅ Fetched Memories:", formatted);
     setMemories(formatted);
   } catch (err) {
-    console.error('Error fetching memories:', err);
+    console.error("❌ Error fetching memories:", {
+      message: err.message,
+      status: err.response?.status,
+      serverError: err.response?.data,
+    });
+    alert("Failed to load memories. Check console for details.");
   }
 };
+
 
 useEffect(() => {
   if (isAuthenticated) fetchMemories();
@@ -291,7 +297,7 @@ const addMemory = async (memory) => {
 
     const formatted = {
       ...res.data.memory,
-      memory_id: res.data.memory.memory_id || res.data.memory.id,
+      id: res.data.memory.id || res.data.memory.id,
       imageUrl: res.data.memory.image_url ?? '',
     };
     setMemories((prev) => [formatted, ...prev]);
@@ -303,7 +309,7 @@ const addMemory = async (memory) => {
 
 
   const deleteMemory = (id) => {
-    setMemories((prev) => prev.filter((m) => m.memory_id !== id));
+    setMemories((prev) => prev.filter((m) => m.id !== id));
   };
 
   const filteredMemories = memories.filter((m) =>

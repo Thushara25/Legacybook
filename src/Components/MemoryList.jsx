@@ -124,7 +124,7 @@ export default function MemoryList({ memories }) {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {memoryList.map((memory) => (
         <MemoryCard
-          key={memory.id || memory.memory_id}
+          key={memory.id || memory.memory.id}
           memory={memory}
           onDelete={handleDeleteMemory}
         />
