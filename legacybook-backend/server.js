@@ -1,4 +1,4 @@
-const express = require('express');
+/*const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -25,4 +25,35 @@ app.use('/api/memories', memoryRoutes);
 // Start server
 app.listen(PORT, () => {
     console.log(`✅ Server running at http://localhost:${PORT}`);
+});*/
+
+// server.js
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const authRoutes = require('./routes/auth');
+const memoryRoutes = require('./routes/memories');
+
+// Load environment variables
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+
+// Health check route
+app.get('/', (req, res) => {
+    res.send('✅ API is working');
+});
+
+// API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/memories', memoryRoutes);
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`✅ Server running on http://localhost:${PORT}`);
 });

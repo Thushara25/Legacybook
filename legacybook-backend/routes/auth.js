@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const router = express.Router();
 
-// 🔐 Signup
+// ✅ Signup Route
 router.post('/signup', async(req, res) => {
     let { username, password } = req.body;
 
@@ -24,9 +24,9 @@ router.post('/signup', async(req, res) => {
         );
 
         const user = result.rows[0];
-        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
-            expiresIn: '1h',
-        });
+        const token = jwt.sign({ id: user.id, username: user.username },
+            process.env.JWT_SECRET, { expiresIn: '1h' }
+        );
 
         res.status(201).json({ message: 'User created', token });
     } catch (err) {
@@ -34,51 +34,40 @@ router.post('/signup', async(req, res) => {
         if (err.code === '23505') {
             return res.status(400).json({ error: 'Username already exists' });
         }
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Server error during signup' });
     }
 });
 
-// 🔐 Login
+// ✅ Login Route
 router.post('/login', async(req, res) => {
     let { username, password } = req.body;
-    console.log('🔐 Login attempt for:', username);
 
     if (!username || !password) {
         return res.status(400).json({ error: 'Username and password required' });
     }
 
-    username = username.trim();
-    password = password.trim();
-
     try {
         const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-        console.log('🧑‍💻 Query result:', result.rows);
 
         if (result.rows.length === 0) {
-            console.log('❌ No user found with username:', username);
-            return res.status(401).json({ error: 'Invalid credentials' });
+            return res.status(401).json({ error: 'Invalid username or password' });
         }
 
         const user = result.rows[0];
-        console.log('DB password hash:', user.password);
-        console.log('User input password:', password);
+        const validPassword = await bcrypt.compare(password, user.password);
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        console.log('✅ Password match:', isMatch);
-
-        if (!isMatch) {
-            console.log('❌ Password mismatch');
-            return res.status(401).json({ error: 'Invalid credentials' });
+        if (!validPassword) {
+            return res.status(401).json({ error: 'Invalid username or password' });
         }
 
-        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
-            expiresIn: '1h',
-        });
+        const token = jwt.sign({ id: user.id, username: user.username },
+            process.env.JWT_SECRET, { expiresIn: '1h' }
+        );
 
         res.json({ token });
     } catch (err) {
         console.error('❌ Login error:', err);
-        res.status(500).json({ error: err.message || 'Internal server error' });
+        res.status(500).json({ error: 'Server error during login' });
     }
 });
 

@@ -170,6 +170,7 @@ function App() {
 export default App;*/
 
 
+// App.jsx
 import React, { useState, useEffect } from 'react';
 import MemoryForm from './Components/MemoryForm';
 import MemoryList from './Components/MemoryList';
@@ -192,9 +193,7 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleToggleTheme = () => {
-    setIsDarkMode((prev) => !prev);
-  };
+  const handleToggleTheme = () => setIsDarkMode((prev) => !prev);
 
   const handleLogin = async () => {
     try {
@@ -217,33 +216,52 @@ function App() {
   const fetchMemories = async () => {
     try {
       const res = await API.get('/memories');
-      setMemories(res.data.memories);
-    } catch (error) {
-      console.error('Error fetching memories:', error);
+
+      // ✅ Ensure backend fields are mapped properly
+      const formatted = res.data.memories.map((m) => ({
+        ...m,
+        memory_id: m.memory_id || m.id,
+        imageUrl: m.image_url ?? '', // Convert to camelCase
+      }));
+
+      console.log("Fetched Memories:", formatted); // ✅ Debug log
+      setMemories(formatted);
+    } catch (err) {
+      console.error('Error fetching memories:', err);
     }
   };
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      setIsAuthenticated(true);
-      fetchMemories();
-    }
+    const token = localStorage.getItem('token');
+    if (token) setIsAuthenticated(true);
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchMemories();
-    }
+    if (isAuthenticated) fetchMemories();
   }, [isAuthenticated]);
 
   const addMemory = async (memory) => {
     try {
       const res = await API.post('/memories', memory);
-      setMemories((prev) => [...prev, res.data.memory]);
+      const formatted = {
+        ...res.data.memory,
+        memory_id: res.data.memory.memory_id || res.data.memory.id,
+        imageUrl: res.data.memory.image_url ?? '', // Convert to camelCase
+      };
+      setMemories((prev) => [formatted, ...prev]);
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to add memory');
     }
   };
+
+  const deleteMemory = (id) => {
+    setMemories((prev) => prev.filter((m) => m.memory_id !== id));
+  };
+
+  const filteredMemories = memories.filter((m) =>
+    m.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    m.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (showSplash) {
     return (
@@ -302,24 +320,24 @@ function App() {
                 onClick={handleLogin}
                 className="w-full bg-[#6A1E55] text-white px-4 py-2 rounded hover:bg-[#A64D79]"
               >
-                Unlock
+                🔓 Unlock
               </button>
             </div>
           ) : (
-            <MemoryForm addMemory={addMemory} />
+            <>
+              <MemoryForm addMemory={addMemory} />
+              <div className="my-6">
+                <input
+                  type="text"
+                  placeholder="Search memories..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#6A1E55] text-black"
+                />
+              </div>
+              <MemoryList memories={filteredMemories} onDelete={deleteMemory} />
+            </>
           )}
-
-          <div className="my-6">
-            <input
-              type="text"
-              placeholder="Search memories..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#6A1E55] text-black"
-            />
-          </div>
-
-          <MemoryList memories={memories} searchTerm={searchTerm} />
 
           <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
             <h2 className="text-2xl font-bold mb-2">Welcome to LegacyBook!</h2>
