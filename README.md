@@ -31,18 +31,20 @@ LegacyBook is a full-stack web app that allows users to save, view, and reflect 
 ### 🧩 Backend Setup
 
 1. Clone the repo:
-   ```bash
-   git clone https://github.com/Thushara25/legacybook.git
-   cd legacybook
+  
+   git clone https://github.com/Thushara25/Legacybook
 
+cd Legacybook
 
-2. Install backend dependencies:
+2. Navigate to the backend folder:
 
-bash
-Copy code
+cd legacybook-backend
+
+3. Install backend dependencies:
+
 npm install
 
-3. Create a .env file in the backend root:
+3. Create a .env file in the backend root:Create a .env file in the legacybook-backend/ directory with the following contents:
 
 PORT=5000
 DATABASE_URL=your_postgres_connection_string
@@ -54,11 +56,11 @@ npm start
 
 This should run on http://localhost:5000.
 
-Frontend Setup
+### 🧩 Frontend Setup
 
-1. Navigate to frontend folder:
+1. Go back to the root project folder 
 
-cd frontend
+cd Legacybook
 
 2. Install frontend dependencies:
 
@@ -67,6 +69,9 @@ npm install
 3. Start the frontend app:
 
 npm start
+
+The frontend will run on: http://localhost:3000
+
 
 ## 🔐 Test Login Credentials
 
