@@ -1,44 +1,3 @@
-/*const express = require('express');
-const router = express.Router();
-const pool = require('../db');
-const authenticateToken = require('../middleware/authenticateToken');
-
-// ✅ Create a memory (Protected)
-router.post('/', authenticateToken, async(req, res) => {
-    const { title, description, image_url } = req.body;
-    const userId = req.user.id;
-
-    if (!title || !description) {
-        return res.status(400).json({ error: 'Title and description are required' });
-    }
-
-    try {
-        const result = await pool.query(
-            'INSERT INTO memories (user_id, title, description, image_url) VALUES ($1, $2, $3, $4) RETURNING *', [userId, title, description, image_url || null]
-        );
-
-        res.json({ message: '✅ Memory created successfully', memory: result.rows[0] });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// ✅ Get all memories (Protected)
-router.get('/', authenticateToken, async(req, res) => {
-    const userId = req.user.id;
-
-    try {
-        const result = await pool.query(
-            'SELECT * FROM memories WHERE user_id = $1 ORDER BY created_at DESC', [userId]
-        );
-
-        res.json({ memories: result.rows });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-module.exports = router;*/
 /*
 const express = require('express');
 const router = express.Router();
@@ -144,7 +103,7 @@ router.post('/memories', authenticateToken, async(req, res) => {
 
 module.exports = router;*/
 
-// routes/memories.js
+/* routes/memories.js
 const express = require('express');
 const pool = require('../db');
 const authenticateToken = require('../middleware/authenticateToken');
@@ -226,5 +185,88 @@ router.delete('/:id', authenticateToken, async(req, res) => {
 });
 
 
+
+module.exports = router;*/
+
+
+/*routes/memories.js
+const express = require('express');
+const pool = require('../db');
+const authenticateToken = require('../middleware/authenticateToken');
+
+const router = express.Router();
+
+router.post('/', authenticateToken, async(req, res) => {
+    const { title, description, emoji, imageUrl } = req.body;
+    const image_url = imageUrl || null;
+    const userId = req.user.id;
+
+    console.log('📥 Received memory:', {
+        title,
+        description,
+        emoji,
+        image_url,
+        userId,
+    });
+
+    try {
+        const result = await pool.query(
+            `INSERT INTO memories (user_id, title, description, emoji, image_url)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`, [userId, title, description, emoji, image_url]
+        );
+
+        const saved = result.rows[0];
+        console.log('✅ Saved to DB:', saved);
+
+        res.status(201).json({
+            memory: {
+                id: saved.id,
+                user_id: saved.user_id,
+                title: saved.title,
+                description: saved.description,
+                emoji: saved.emoji,
+                image_url: saved.image_url,
+                created_at: saved.created_at,
+            },
+        });
+    } catch (err) {
+        console.error('❌ Error inserting memory:', err.message);
+        res.status(500).json({ error: 'Failed to save memory' });
+    }
+});
+
+module.exports = router;*/
+
+// routes/memories.js
+const express = require("express");
+const router = express.Router();
+const pool = require("../db");
+const authenticateToken = require("../middleware/authenticateToken");
+
+// POST /api/memories
+router.post("/", authenticateToken, async(req, res) => {
+    const { title, description, imageUrl } = req.body;
+
+    const userId = req.user.id; // user ID from JWT
+
+    if (!title || !description) {
+        return res.status(400).json({ error: "Title and description are required" });
+    }
+
+    try {
+        const result = await pool.query(
+            `INSERT INTO memories (user_id, title, description, image_url)
+   VALUES ($1, $2, $3, $4)
+   RETURNING *`, [userId, title, description, imageUrl]
+        );
+
+
+        res.status(201).json({ memory: result.rows[0] });
+    } catch (err) {
+        console.error("❌ Error inserting memory:", err.message);
+        res.status(500).json({ error: "Failed to save memory" });
+    }
+});
 
 module.exports = router;
