@@ -68,6 +68,16 @@ npm install
 
 npm start
 
+## 🔐 Test Login Credentials
+
+To access the app, use the following credentials:
+
+- **Username:** `admin`
+- **Password:** `admin123`
+
+> These credentials are seeded in the database for testing purposes. Make sure your backend is running and connected to the same PostgreSQL database.
+
+
 The app should now be running on http://localhost:3000
 
 
@@ -79,11 +89,5 @@ Backend: https://legacybook.onrender.com
 Author
 Made with ❤️ by Thushara Balakrishna
 
-### 📜 License
-
-- `Thushara25` → Your GitHub username  
-` → Your actual PostgreSQL connection string  
-- `your_jwt_secret_key_here` → Your JWT secret  
-- `Thushara Balakrishna` → Your name  
 
 
