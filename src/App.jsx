@@ -213,7 +213,7 @@ function App() {
     setMemories([]);
   };
 
-  const fetchMemories = async () => {
+  /*const fetchMemories = async () => {
     try {
       const res = await API.get('/memories');
 
@@ -252,7 +252,55 @@ function App() {
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to add memory');
     }
-  };
+  };*/
+
+const fetchMemories = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await API.get('/memories', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const formatted = res.data.memories.map((m) => ({
+      ...m,
+      memory_id: m.memory_id || m.id,
+      imageUrl: m.image_url ?? '',
+    }));
+
+    console.log("Fetched Memories:", formatted);
+    setMemories(formatted);
+  } catch (err) {
+    console.error('Error fetching memories:', err);
+  }
+};
+
+useEffect(() => {
+  if (isAuthenticated) fetchMemories();
+}, [isAuthenticated]);
+
+const addMemory = async (memory) => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await API.post('/memories', memory, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const formatted = {
+      ...res.data.memory,
+      memory_id: res.data.memory.memory_id || res.data.memory.id,
+      imageUrl: res.data.memory.image_url ?? '',
+    };
+    setMemories((prev) => [formatted, ...prev]);
+  } catch (err) {
+    alert(err.response?.data?.error || 'Failed to add memory');
+  }
+};
+
+
 
   const deleteMemory = (id) => {
     setMemories((prev) => prev.filter((m) => m.memory_id !== id));

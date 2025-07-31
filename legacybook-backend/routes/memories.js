@@ -268,5 +268,20 @@ router.post("/", authenticateToken, async(req, res) => {
         res.status(500).json({ error: "Failed to save memory" });
     }
 });
+// GET /api/memories
+router.get("/", authenticateToken, async(req, res) => {
+    try {
+        const userId = req.user.id;
+        const result = await pool.query(
+            "SELECT * FROM memories WHERE user_id = $1 ORDER BY memory_id DESC", [userId]
+        );
+        res.json({ memories: result.rows });
+    } catch (err) {
+        console.error("Error fetching memories:", err);
+        res.status(500).json({ error: "Failed to fetch memories" });
+    }
+});
+
+
 
 module.exports = router;
