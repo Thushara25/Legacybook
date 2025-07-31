@@ -82,7 +82,6 @@ Made with ❤️ by Thushara Balakrishna
 ### 📜 License
 
 - `Thushara25` → Your GitHub username  
-- `postgresql://legacybook_user:HkF6Bap9TGu5bleAMsGVBG9AMesc73sq@dpg-d23hhkje5dus73aktn10-a.oregon-postgres.render.com/legacybook
 ` → Your actual PostgreSQL connection string  
 - `your_jwt_secret_key_here` → Your JWT secret  
 - `Thushara Balakrishna` → Your name  
